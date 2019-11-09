@@ -54,14 +54,16 @@
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							Help & FAQs
 						</a>
-						<div id= "account_href">
 						<a href="login.html" class="flex-c-m trans-04 p-lr-25">
-								<div id="account_div">
-								My Account
+								<div id="account_div_login">
+								Sign In
 								</div>
 						</a>
-						</div>
-
+						<a href="logout.html" class="flex-c-m trans-04 p-lr-25">
+								<div id="account_div_reg">
+								Register
+								</div>
+						</a>
 						<a href="#" class="flex-c-m trans-04 p-lr-25">
 							EN
 						</a>
@@ -1741,9 +1743,10 @@
 		});
 	</script>
 	<!--===============================================================================================-->
+	
 	<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
 	<script>
-		// Initialize Firebase
+			// Initialize Firebase
 		var config = {
 			apiKey: "AIzaSyDlnO7sZ5ECzUO-wmCu4ZenNXO8ZF0qb0E",
 			authDomain: "art-mad.firebaseapp.com",
@@ -1755,30 +1758,54 @@
 		};
 		firebase.initializeApp(config);
 		firebase.auth().onAuthStateChanged(function (user) {
+			console.log(user,131)
 			if (user) {
 				// User is signed in.
 
 				// document.getElementById("account_div").style.display = "block";
 
 				var user = firebase.auth().currentUser;
-
-				if (user != null) {
-
+				var user_verified = user.emailVerified;
+				if (user != null && user_verified) {
 					var email_id = user.email;
-					document.getElementById("account_div").innerHTML = email_id;
+					var user_name = user.name;
+					document.getElementById("account_div_login").innerHTML = email_id;
+					document.getElementById("account_div_reg").innerHTML = "Sig Out"
+					// firebase.auth().signOut();
 
+				}
+				else if(!user_verified){
+					send_verification();
 				}
 
 			} else {
 				// No user is signed in.
 				
-				document.getElementById("account_div").innerHTML = "Sign In";
-				document.getElementById("account_div").className = "flex-c-m trans-04 p-lr-25";
+				// document.getElementById("account_div").innerHTML = "Sign In";
+				document.getElementById("account_div_login").innerHTML = "Sign In";
+				document.getElementById("account_div_reg").innerHTML = "<a href='registration.html'>Register</a>";
 			}
 		});
 
 	</script>
+	<script>
+		function send_verification(){
+            console.log("calaling sendveri")
+            var user = firebase.auth().currentUser;
 
+            user.sendEmailVerification().then(function() {
+            // Email sent.
+            window.alert("Verification send please check your mail..");
+            }).catch(function(error) {
+            // An error happened.
+            window.alert("Error: " + error.errorMessage);
+            });
+
+        }
+        function logout() {
+            firebase.auth().signOut();
+        }
+	</script>
 	<script src="js/main.js"></script>
 
 </body>
